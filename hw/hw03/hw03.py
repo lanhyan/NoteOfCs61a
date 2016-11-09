@@ -119,6 +119,22 @@ def count_change(amount):
     9828
     """
     "*** YOUR CODE HERE ***"
+    # if amount == 0:
+    #     return 1
+    # scale, count = 1, 0
+    # while amount >= scale:
+    #     count = count + count_change(amount - scale)
+    #     scale = scale * 2
+    # return count
+    def count_sum(base_num, scale):
+        if base_num == 0:
+            return 1
+        count = 0
+        while base_num >= scale:
+            count = count + count_sum(base_num - scale, scale)
+            scale = scale * 2
+        return count
+    return count_sum(amount, 1)
 
 def print_move(origin, destination):
     """Print instructions to move a disk."""
@@ -153,7 +169,13 @@ def move_stack(n, start, end):
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
+    if n > 1:
+        move_stack(n - 1, start, 6 - start - end)
+    print_move(start, end)
+    if n > 1:
+        move_stack(n - 1, 6 - start - end, end)
 
+from functools import reduce
 def flatten(lst):
     """Returns a flattened version of lst.
 
@@ -167,6 +189,13 @@ def flatten(lst):
     [1, 1, 1, 1, 1, 1]
     """
     "*** YOUR CODE HERE ***"
+    # li = []
+    # for i in lst:
+    #     if type(i) == list:
+    #         lst + flatten(i)
+    #     lst.append(i)
+    # return li
+    return reduce(lambda x, y: x + flatten(y) if type(y) == list else x + [y], [[]] + lst)
 
 def merge(lst1, lst2):
     """Merges two sorted lists.
@@ -181,6 +210,16 @@ def merge(lst1, lst2):
     [2, 4, 5, 6, 7]
     """
     "*** YOUR CODE HERE ***"
+    # if len(lst1) == 0:
+    #     return lst2
+    # if len(lst2) == 0:
+    #     return lst1
+    if not lst1 or not lst2:
+        return lst1 + lst2
+    if lst1[0] > lst2[0]:
+        return [lst2[0]] + merge(lst1, lst2[1:])
+    else:
+        return [lst1[0]] + merge(lst1[1:], lst2)
 
 def mergesort(seq):
     """Mergesort algorithm.
@@ -193,6 +232,10 @@ def mergesort(seq):
     [1]
     """
     "*** YOUR CODE HERE ***"
+    length = len(seq)
+    if length < 2:
+        return seq
+    return merge(mergesort(seq[0:length // 2]), mergesort(seq[length // 2:]))
 
 ###################
 # Extra Questions #
@@ -216,4 +259,5 @@ def Y_tester():
     2
     """
     "*** YOUR CODE HERE ***"
-    return Y(________)  # Replace
+    # return Y(________)  # Replace
+    return Y(lambda f: lambda n: 1 if n == 1 else n * f()(n - 1))
